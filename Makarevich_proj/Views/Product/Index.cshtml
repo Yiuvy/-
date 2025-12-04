@@ -1,0 +1,80 @@
+﻿@* @model IEnumerable<Makarevich_sol_Domain.Entities.Doctor> *@
+@model IEnumerable<Doctor>
+
+@{
+	ViewData["Title"] = "Index";
+
+	//Адрес текущей страницы:
+	var request = ViewContext.HttpContext.Request;
+	var returnUrl = request.Path + request.QueryString.ToUriComponent();
+	var clinics = ViewData["clinics"] as IEnumerable<Clinic>;
+}
+
+
+<h1>Врачи</h1>
+<div class="row">
+
+	<!-- выбор категории -->
+	<div class="col-2 border-2">
+		<ul class="nav ">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle"
+				   data-bs-toggle="dropdown"
+				   href="#"
+				   role="button"
+				   aria-expanded="false">
+					@ViewData["currentClinic"]
+				</a>
+				<ul class="dropdown-menu">
+					<li>
+						<a class="dropdown-item"
+						   asp-controller="product"
+						   asp-route-clinic=@null>Все</a>
+					</li>
+					@foreach (var item in clinics)
+					{
+						<li>
+							<a class="dropdown-item"
+							   asp-controller="product"
+							   asp-route-clinic="@item.IdNormalizedName">
+								@item.Name
+							</a>
+						</li>
+					}
+				</ul>
+			</li>
+		</ul>
+	</div><!-- выбор категории -->
+
+
+
+
+	<div class="card-group">
+
+
+		@foreach (var item in Model)
+		{
+			<div class="col-4 p-4">
+				<div class="card border-dark m-2 text-center">
+					<img class="card-img-top" src="@item.Image" alt="No image available" />
+					<div class="card-body">
+						<h5 class="card-title ">@item.Surname @item.Name</h5>
+						<p class="card-text">@item.Specialization</p>
+						<p class="card-text">
+							@item.IdClinic
+						</p>
+						<h5><span class="badge bg-secondary">Количество пациентов: @item.AmountOfPatients</span></h5>
+					</div><!-- card-body -->
+					<div class="card-footer text-center">
+						<a class="btn btn-outline-primary"
+						   asp-action="add" asp-controller="cart" asp-route-id="@item.Id"
+						   asp-route-returnurl="@returnUrl">
+							Записаться на приём <i class="fa-solid fa-book-open"></i>
+						</a>
+					</div><!-- card-footer -->
+				</div><!-- card -->
+			</div>
+			<!-- col -->
+		}
+
+	</div>

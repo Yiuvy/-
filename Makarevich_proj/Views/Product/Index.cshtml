@@ -1,5 +1,7 @@
 ﻿@* @model IEnumerable<Makarevich_sol_Domain.Entities.Doctor> *@
-@model IEnumerable<Doctor>
+@* @model IEnumerable<Doctor> *@
+@using Makarevich_sol_Domain.Models
+@model ListModel<Doctor>
 
 @{
 	ViewData["Title"] = "Index";
@@ -8,6 +10,15 @@
 	var request = ViewContext.HttpContext.Request;
 	var returnUrl = request.Path + request.QueryString.ToUriComponent();
 	var clinics = ViewData["clinics"] as IEnumerable<Clinic>;
+
+	string? clinic = request.RouteValues["clinic"]?.ToString();
+	int prev = Model.CurrentPage == 1
+	? 1
+	: Model.CurrentPage - 1;
+	int next = Model.CurrentPage == Model.TotalPages
+	? Model.TotalPages
+	: Model.CurrentPage + 1;
+
 }
 
 
@@ -47,12 +58,13 @@
 	</div><!-- выбор категории -->
 
 
-
+	@if (Model !=null)
+	{
 
 	<div class="card-group">
 
 
-		@foreach (var item in Model)
+		@foreach (var item in Model.Items)
 		{
 			<div class="col-4 p-4">
 				<div class="card border-dark m-2 text-center">
@@ -78,3 +90,50 @@
 		}
 
 	</div>
+	}
+
+	<pager current-page="@Model.CurrentPage"
+		   total-pages="@Model.TotalPages"
+
+		   clinic="@clinic">
+	</pager>
+
+	@* 	<!-- Pager -->
+	<div class="row">
+		<nav aria-label="Pages">
+			<ul class="pagination">
+				<li class="page-item @(prev == Model.CurrentPage ? "disabled" : "")">
+					<a class="page-link "
+					   asp-controller="Product"
+					   asp-action="Index"
+					   asp-route-pageno="@prev"
+					   asp-route-category="@clinic" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				@for (int i = 1; i <= Model.TotalPages; i++)
+				{
+					<li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+						<a class="page-link"
+						   asp-controller="Product"
+						   asp-action="Index"
+						   asp-route-pageno="@i"
+						   asp-route-clinic="@clinic">
+							@i
+						</a>
+					</li>
+				}
+				<li class="page-item @(next == Model.CurrentPage ? "disabled" : "")">
+					<a class="page-link"
+					   asp-action="Index"
+					   asp-route-pageno="@next"
+					   asp-route-clinic="@clinic" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div> <!-- Pager --> *@
+	<h2 class="text-warning">@ViewData["Error"]</h2>
+
+</div>

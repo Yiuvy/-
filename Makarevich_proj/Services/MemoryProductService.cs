@@ -1,19 +1,21 @@
 ﻿using Makarevich_proj.Services.contracts_interfaces_;
 using Makarevich_sol_Domain.Entities;
 using Makarevich_sol_Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Makarevich_proj.Services
 {
     public class MemoryProductService : IProductService
     {
+        private readonly ICategoryService _categoryService;
+        private readonly IConfiguration _config;
         List<Doctor> _doctors;
         List<Clinic> _clinics;
 
-        public MemoryProductService(ICategoryService categoryService)
+        public MemoryProductService([FromServices] IConfiguration config, ICategoryService categoryService)
         {
-            _clinics = categoryService.GetCategoryListAsync()
-            .Result
-            .Data;
+            _clinics = categoryService.GetCategoryListAsync().Result.Data;
+            _config = config;
             SetupData();
         }
 
@@ -29,7 +31,7 @@ namespace Makarevich_proj.Services
                     Name = "Глеб",
                     Surname = "Романенко",
                     AmountOfPatients = 5,
-                    Image = "images/17.jpg",
+                    Image = "/images/17.jpg",
                     Specialization="Интерн",
                     IdClinic = _clinics.Find(c => c.IdNormalizedName.Equals("Lode")).Id
                 },
@@ -39,7 +41,7 @@ namespace Makarevich_proj.Services
                     Name = "Анастасия",
                     Surname = "Кисегач",
                     AmountOfPatients = 2,
-                    Image = "images/11.jpg",
+                    Image = "/images/11.jpg",
                     Specialization="Главный врач",
                     IdClinic = _clinics.Find(c => c.IdNormalizedName.Equals("Lode")).Id
                 },
@@ -48,7 +50,7 @@ namespace Makarevich_proj.Services
                     Name = "Андрей",
                     Surname = "Быков",
                     AmountOfPatients = 78,
-                    Image = "images/13.jpg",
+                    Image = "/images/13.jpg",
                     Specialization="Заведующий терапевтическим отделением",
                     IdClinic = _clinics.Find(c => c.IdNormalizedName.Equals("Lode")).Id
                 },
@@ -57,7 +59,7 @@ namespace Makarevich_proj.Services
                     Name = "Иван",
                     Surname = "Купитман",
                     AmountOfPatients = 12,
-                    Image = "images/16.jpg",
+                    Image = "/images/16.jpg",
                     Specialization="Венеролог",
                     IdClinic = _clinics.Find(c => c.IdNormalizedName.Equals("Kravira")).Id
                 }
@@ -75,7 +77,7 @@ namespace Makarevich_proj.Services
             throw new NotImplementedException();
         }
 
-        public Task<ResponseData<ListModel<Doctor>>> GetProductListAsync(string? ClinicNormalizedName, int pageNo = 1)
+        public Task<ResponseData<ListModel<Doctor>>> GetProductListAsync(string? ClinicNormalizedName, int pageNo = 1) //передаём номер страницы (По умолчанию 1)
         {
 
             // Создать объект результата
@@ -99,16 +101,24 @@ namespace Makarevich_proj.Services
             .ToList();
 
 
-            // Выбрать объекты, отфильтрованные по Id категории,
-            // если этот Id имеется
-            //var data = _doctors
-            //.Where(d => ClinicNormalizedName == null || d.IdClinic.Equals(ClinicNormalizedName))?
-            //.ToList();
+            // получить размер страницы из конфигурации
+            int pageSize = _config.GetSection("ItemsPerPage").Get<int>();
+            // получить общее количество страниц
+            int totalPages = (int)Math.Ceiling(data.Count / (double)pageSize);
 
-
+            // получить данные страницы
+            var listData = new ListModel<Doctor>()
+            {
+                Items = data.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList(),
+                CurrentPage = pageNo,
+                TotalPages = totalPages
+            };
 
             // поместить данные в объект результата
-            result.Data = new ListModel<Doctor>() { Items = data };
+            result.Data = listData;
+
+            // поместить данные в объект результата
+           // result.Data = new ListModel<Doctor>() { Items = data };
 
             // Если список пустой
             if (data.Count == 0)

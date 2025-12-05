@@ -5,12 +5,13 @@ namespace Makarevich_proj.Controllers
 {
     public class ProductController(ICategoryService categoryService, IProductService productService) : Controller
     {
-        public async Task<IActionResult> Index(string? clinic)
+        [Route("Catalog")]
+        [Route("Catalog/{clinic}")]
+        public async Task<IActionResult> Index(string? clinic, int pageNo = 1)
         {
 
             // получить список категорий
-            var categoriesResponse = await
-            categoryService.GetCategoryListAsync();
+            var categoriesResponse = await categoryService.GetCategoryListAsync();
 
             // если список не получен, вернуть код 404 
             if (!categoriesResponse.Success)
@@ -27,10 +28,10 @@ namespace Makarevich_proj.Controllers
             ViewData["currentClinic"] = currentClinic;
 
             var productResponse =
-            await productService.GetProductListAsync(clinic);
+            await productService.GetProductListAsync(clinic, pageNo);
             if (!productResponse.Success)
                 ViewData["Error"] = productResponse.ErrorMessage;
-            return View(productResponse.Data.Items);
+            return View(productResponse.Data);
         }
 
 

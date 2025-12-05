@@ -56,84 +56,26 @@
 			</li>
 		</ul>
 	</div><!-- выбор категории -->
-
-
-	@if (Model !=null)
+	@if (Model != null)
 	{
 
-	<div class="card-group">
+		<div class="card-group">
 
 
-		@foreach (var item in Model.Items)
-		{
-			<div class="col-4 p-4">
-				<div class="card border-dark m-2 text-center">
-					<img class="card-img-top" src="@item.Image" alt="No image available" />
-					<div class="card-body">
-						<h5 class="card-title ">@item.Surname @item.Name</h5>
-						<p class="card-text">@item.Specialization</p>
-						<p class="card-text">
-							@item.IdClinic
-						</p>
-						<h5><span class="badge bg-secondary">Количество пациентов: @item.AmountOfPatients</span></h5>
-					</div><!-- card-body -->
-					<div class="card-footer text-center">
-						<a class="btn btn-outline-primary"
-						   asp-action="add" asp-controller="cart" asp-route-id="@item.Id"
-						   asp-route-returnurl="@returnUrl">
-							Записаться на приём <i class="fa-solid fa-book-open"></i>
-						</a>
-					</div><!-- card-footer -->
-				</div><!-- card -->
-			</div>
-			<!-- col -->
-		}
+			@foreach (var item in Model.Items)
+			{
+				<partial name="_ProductItemPartial" model="@item" /> //разметка предствлена в частичном представлении
+			}
 
-	</div>
+		</div>
 	}
 
 	<pager current-page="@Model.CurrentPage"
 		   total-pages="@Model.TotalPages"
-
 		   clinic="@clinic">
 	</pager>
 
-	@* 	<!-- Pager -->
-	<div class="row">
-		<nav aria-label="Pages">
-			<ul class="pagination">
-				<li class="page-item @(prev == Model.CurrentPage ? "disabled" : "")">
-					<a class="page-link "
-					   asp-controller="Product"
-					   asp-action="Index"
-					   asp-route-pageno="@prev"
-					   asp-route-category="@clinic" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-					</a>
-				</li>
-				@for (int i = 1; i <= Model.TotalPages; i++)
-				{
-					<li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-						<a class="page-link"
-						   asp-controller="Product"
-						   asp-action="Index"
-						   asp-route-pageno="@i"
-						   asp-route-clinic="@clinic">
-							@i
-						</a>
-					</li>
-				}
-				<li class="page-item @(next == Model.CurrentPage ? "disabled" : "")">
-					<a class="page-link"
-					   asp-action="Index"
-					   asp-route-pageno="@next"
-					   asp-route-clinic="@clinic" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-					</a>
-				</li>
-			</ul>
-		</nav>
-	</div> <!-- Pager --> *@
+	
 	<h2 class="text-warning">@ViewData["Error"]</h2>
 
 </div>

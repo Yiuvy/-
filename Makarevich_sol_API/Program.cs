@@ -1,6 +1,20 @@
+using Makarevich_sol_API.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+
+//Добавляем строку подключения
+var connectionString = builder.Configuration.GetConnectionString("default") ?? throw new InvalidOperationException("Connection string 'default' not found.");
+//Добавляем контекст базы данных
+builder.Services.AddDbContext<AppDBContext>(options =>
+    options.UseSqlite(connectionString));
+
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -30,8 +30,8 @@ namespace Makarevich_sol_API.Data
                 {
                     new Doctor
                     {
-                        Name = "Глеб",
-                        Surname = "Романенко",
+                        Name = "Борис",
+                        Surname = "Левин",
                         AmountOfPatients = 5,
                         Specialization="Интерн",
                         IdClinic =clinics.FirstOrDefault(c => c.IdNormalizedName.Equals("Kravira")).Id,
@@ -39,10 +39,10 @@ namespace Makarevich_sol_API.Data
                     },
                     new Doctor
                     {
-                        Name = "Анастасия",
-                        Surname = "Кисегач",
+                        Name = "Варвара",
+                        Surname = "Черноус",
                         AmountOfPatients = 2,
-                        Specialization="Главный врач",
+                        Specialization="Интерн",
                         IdClinic =clinics.FirstOrDefault(c => c.IdNormalizedName.Equals("Lode")).Id,
                         Image = uri+"/Images/11.jpg"
                     },

@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Security.Claims;
 using Makarevich_proj.Data;
 using Makarevich_proj.Services;
@@ -20,8 +21,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //��������� ���������� ��������� ��������� ������ ���� ������ �� ����� ����������.
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddTransient<ICategoryService, MemoryCategoryService>(); //зарегистрировали сервис
-builder.Services.AddTransient<IProductService, MemoryProductService>(); //зарегистрировали сервис
+//builder.Services.AddTransient<ICategoryService, MemoryCategoryService>(); //зарегистрировали сервис
+//builder.Services.AddTransient<IProductService, MemoryProductService>(); //зарегистрировали сервис
+
+
+builder.Services.AddHttpClient<IProductService, ApiProductService>(opt
+=> opt.BaseAddress = new Uri("https://localhost:7002/api/doctors/")); 
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt
+=> opt.BaseAddress = new Uri("https://localhost:7002/api/clinics/"));
+
+
 
 
 //������������� ������� ����� � �������������� ����������� ������������� (IdentityUser).

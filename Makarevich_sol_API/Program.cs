@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //Добавляем строку подключения
-var connectionString = builder.Configuration.GetConnectionString("default") ?? throw new InvalidOperationException("Connection string 'default' not found.");
+var connectionString = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'Default' not found.");
 //Добавляем контекст базы данных
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlite(connectionString));

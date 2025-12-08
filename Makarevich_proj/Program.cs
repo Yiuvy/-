@@ -18,6 +18,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 //�������������� �������� ���� ������ ApplicationDbContext, ������� ���������� SQL Server � ��������� ������� �����������.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<AppDBContext>(options =>
+    options.UseSqlServer(""));
+
 //��������� ���������� ��������� ��������� ������ ���� ������ �� ����� ����������.
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -45,11 +49,11 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 }
 )
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddAuthorization(opt =>
-{
-    opt.AddPolicy("admin", p =>
-    p.RequireClaim(ClaimTypes.Role, "admin"));
-});
+//builder.Services.AddAuthorization(opt =>
+//{
+//    opt.AddPolicy("admin", p =>
+//    p.RequireClaim(ClaimTypes.Role, "admin"));
+//});
 builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();//Имитация отправки подтверждающего сообщения
 
 //��������� MVC � Razor Pages ��� ����������� �������.

@@ -21,27 +21,21 @@ namespace Makarevich_sol_API.Controllers
         List<Doctor> _doctors;
         List<Clinic> _clinics;
         private readonly IConfiguration _config;
-        public DoctorsController(AppDBContext context, IWebHostEnvironment env)
+        public DoctorsController(AppDBContext context, IWebHostEnvironment env, IConfiguration config)
         {
             _context = context;
             _env = env;
+            _config = config;
         }
 
         // GET: api/Doctors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
-        {
-
-            return await _context.Doctors.ToListAsync();
-        }
-
-        // GET: api/Doctors/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Doctor>> GetDoctor(string? ClinicNormalizedName,
+        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors(string? ClinicNormalizedName,
             int pageNo = 1,
             int pageSize = 3)
         {
-           { // Создать объект результата
+
+            // Создать объект результата
             var result = new ResponseData<ListModel<Doctor>>();
 
             int? clinicId = null;
@@ -50,13 +44,13 @@ namespace Makarevich_sol_API.Controllers
             // с заданным categoryNormalizedName
 
             if (ClinicNormalizedName != null)
-                clinicId = _clinics
-                .Find(c => c.IdNormalizedName.Equals(ClinicNormalizedName))
+                clinicId = _context.Clinics
+                .FirstOrDefault(c => c.IdNormalizedName.Equals(ClinicNormalizedName))
                 ?.Id;
 
             // Выбрать объекты, отфильтрованные по Id категории,
             // если этот Id имеется
-            var data = _doctors
+            var data = _context.Doctors
             .Where(d => clinicId == null || d.IdClinic.Equals(clinicId))?
             .ToList();
 
@@ -84,7 +78,18 @@ namespace Makarevich_sol_API.Controllers
                 result.ErrorMessage = "Нет объектов в выбраннной категории";
             }
 
-            return Ok(result);}
+            return Ok(result);
+        }
+
+
+        // GET: api/Doctors/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Doctor>> GetDoctor(int id)
+        {
+            var doctor = _context.Doctors.Find(id);
+            if (doctor == null) { return NotFound(); }
+
+            return Ok(doctor);
 
         }
 

@@ -3,39 +3,44 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Makarevich_proj.Controllers
 {
-    public class ProductController(ICategoryService categoryService, IProductService productService) : Controller
+    [Route("Catalog")]
+    public class ProductController : Controller
     {
-        [Route("Catalog")]
-        [Route("Catalog/{clinic}")]
+        private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
+
+        public ProductController(ICategoryService categoryService, IProductService productService)
+        {
+            _categoryService = categoryService;
+            _productService = productService;
+        }
+
+        // Изменить маршруты, чтобы клиника передавалась как сегмент маршрута
+        [HttpGet]
+        [Route("")]
+        [Route("{clinic}")]
         public async Task<IActionResult> Index(string? clinic, int pageNo = 1)
         {
+            // Получить список категорий
+            var categoriesResponse = await _categoryService.GetCategoryListAsync();
 
-            // получить список категорий
-            var categoriesResponse = await categoryService.GetCategoryListAsync();
-
-            // если список не получен, вернуть код 404 
             if (!categoriesResponse.Success)
                 return NotFound(categoriesResponse.ErrorMessage);
 
-            // передать список категорий во ViewData
             ViewData["clinics"] = categoriesResponse.Data;
 
-
-            // передать во ViewData имя текущей категории
+            // Определить текущую клинику
             var currentClinic = clinic == null
                 ? "Все клиники"
                 : categoriesResponse.Data.FirstOrDefault(c => c.IdNormalizedName == clinic)?.Name;
             ViewData["currentClinic"] = currentClinic;
 
-            var productResponse =
-            await productService.GetProductListAsync(clinic, pageNo);
+            // Передать сегмент маршрута (clinic) в сервис
+            var productResponse = await _productService.GetProductListAsync(clinic, pageNo);
             if (!productResponse.Success)
                 ViewData["Error"] = productResponse.ErrorMessage;
+
             return View(productResponse.Data);
         }
-
-
-
     }
-
 }

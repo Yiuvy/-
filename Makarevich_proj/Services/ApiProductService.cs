@@ -41,8 +41,6 @@ namespace Makarevich_proj.Services
 
         //}
 
-
-
         public async Task<ResponseData<Doctor>> CreateProductAsync(Doctor product, IFormFile? formFile)
         {
             var serializerOptions = new JsonSerializerOptions
@@ -135,7 +133,7 @@ namespace Makarevich_proj.Services
 
             if (!string.IsNullOrEmpty(ClinicNormalizedName))
             {
-                queryParams.Add("category", ClinicNormalizedName);
+                queryParams.Add("ClinicNormalizedName", ClinicNormalizedName);
             }
 
             // Библиотека Microsoft.AspNetCore.WebUtilities предоставляет QueryHelpers, если у вас она доступна

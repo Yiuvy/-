@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Makarevich_proj.Data;
 using Makarevich_proj.Services.contracts_interfaces_;
 using Makarevich_sol_Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Makarevich_proj.Areas.Admin
 {
+    [Authorize(Policy = "admin")]
     public class IndexModel : PageModel
     {
         private readonly Makarevich_proj.Data.AppDBContext _context;

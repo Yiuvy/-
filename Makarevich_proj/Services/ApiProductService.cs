@@ -8,104 +8,62 @@ namespace Makarevich_proj.Services
 {
     public class ApiProductService(HttpClient httpClient) : IProductService
     {
-        //public async Task<ResponseData<Doctor>> CreateProductAsync(Doctor product, IFormFile? formFile)
-        //{
-        //    var serializerOptions = new JsonSerializerOptions()
-        //    {
-        //        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        //    };
-
-        //    //послать запрос к Апи для сохранения объекта
-        //    var response = await httpClient.PostAsJsonAsync(httpClient.BaseAddress, product);
-
-        //    if (!response.IsSuccessStatusCode)
-        //    {
-        //        return new ResponseData<Doctor>
-        //        {
-        //            Success = false,
-        //            ErrorMessage = $"Can't find the object:{response.StatusCode}"
-        //        };
-        //    }
-        //    //если фай изображения передан клиентом
-        //    if (formFile !=null)
-        //    {
-        //        //получить созданный объект из ответа API-сервиса
-        //        var doctor = await response.Content.ReadFromJsonAsync<Doctor>();
-        //        //создать объект запроса
-        //        var request = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Post,
-        //            RequestUri = new Uri($"{httpClient.BaseAddress.AbsoluteUri}/{doctor.Id}")
-        //        };
-        //    }
-
-        //}
-
         public async Task<ResponseData<Doctor>> CreateProductAsync(Doctor product, IFormFile? formFile)
         {
-            var serializerOptions = new JsonSerializerOptions
+            var serializerOptions = new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            // послать POST-запрос для создания объекта
+            // Подготовить объект, возвращаемый методом
+            var responseData = new ResponseData<Doctor>();
+
+
+            //послать запрос к Апи для сохранения объекта
             var response = await httpClient.PostAsJsonAsync(httpClient.BaseAddress, product);
 
             if (!response.IsSuccessStatusCode)
             {
-                return new ResponseData<Doctor>
-                {
-                    Success = false,
-                    ErrorMessage = $"Can't create object: {response.StatusCode}"
-
-                };
+                responseData.Success = false;
+                responseData.ErrorMessage = $"Не удалось создать объект:{response.StatusCode}";
+                return responseData;
             }
-
-            // Получить созданный объект Doctor из ответа API
-            var createdDoctor = await response.Content.ReadFromJsonAsync<Doctor>();
-
-            if (createdDoctor == null)
-            {
-                return new ResponseData<Doctor>
-                {
-                    Success = false,
-                    ErrorMessage = $"Failed to deserialize created doctor."
-                };
-            }
-
-            // Если есть файл изображения, отправляем его
+            //если фай изображения передан клиентом
             if (formFile != null)
             {
-                // Создаем MultipartFormDataContent для загрузки файла
-                using var content = new MultipartFormDataContent();
-
-                // Содержимое файла
-                var fileContent = new StreamContent(formFile.OpenReadStream());
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(formFile.ContentType);
-
-                // добавляем файл в контент, указывая название поля, имя файла и содержимое
-                content.Add(fileContent, "file", formFile.FileName);
-
-                // предположим, что для загрузки изображения у вас отдельный эндпоинт, например, /api/doctors/{id}/uploadImage
-                var uploadResponse = await httpClient.PostAsync($"api/doctors/{createdDoctor.Id}/uploadImage", content);
-
-                if (!uploadResponse.IsSuccessStatusCode)
+                //получить созданный объект из ответа API-сервиса
+                var doctor = await response.Content.ReadFromJsonAsync<Doctor>();
+                //создать объект запроса
+                var request = new HttpRequestMessage
                 {
-                    return new ResponseData<Doctor>
-                    {
-                        Success = false,
-                        ErrorMessage = $"Image upload failed: {uploadResponse.StatusCode}"
-                    };
-                }
-            }
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"{httpClient.BaseAddress.AbsoluteUri}/{doctor.Id}")
+                };
 
-            // Возвращаем успешно созданного доктора
-            return new ResponseData<Doctor>
-            {
-                Data = createdDoctor,
-                Success = true
-            };
+                // Создать контент типа multipart form-data
+                var content = new MultipartFormDataContent();
+
+                // создать потоковый контент из переданного файла
+                var streamContent = new StreamContent(formFile.OpenReadStream());
+
+                // добавить потоковый контент в общий контент по именем "image"
+                content.Add(streamContent, "image", formFile.FileName);
+
+                // поместить контент в запрос
+                request.Content = content;
+
+                // послать запрос к Api-сервису
+                response = await httpClient.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    responseData.Success = false;
+                    responseData.ErrorMessage = $"Не удалось сохранить изображение:{response.StatusCode}";
+                }
+
+            }
+            return responseData;
         }
+
         public Task DeleteProductAsync(int id)
         {
             throw new NotImplementedException();

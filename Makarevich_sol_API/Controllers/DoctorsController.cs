@@ -155,5 +155,52 @@ namespace Makarevich_sol_API.Controllers
         {
             return _context.Doctors.Any(e => e.Id == id);
         }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> SaveImage(int id, IFormFile image)
+        {
+            // Найти объект по Id
+            var doc = await _context.Doctors.FindAsync(id);
+            
+            if (doc == null)
+            {
+                return NotFound();
+            }
+
+            // Путь к папке wwwroot/Images
+            var imagesPath = Path.Combine(_env.WebRootPath, "Images");
+
+            // получить случайное имя файла
+            var randomName = Path.GetRandomFileName();
+
+            // получить расширение в исходном файле
+            var extension = Path.GetExtension(image.FileName);
+
+            // задать в новом имени расширение как в исходном файле
+            var fileName = Path.ChangeExtension(randomName, extension);
+
+            // полный путь к файлу
+            var filePath = Path.Combine(imagesPath, fileName);
+
+            // создать файл и открыть поток для записи
+            using var stream = System.IO.File.OpenWrite(filePath);
+
+            // скопировать файл в поток
+            await image.CopyToAsync(stream);
+
+            // получить Url хоста
+            var host = "https://" + Request.Host;
+
+            // Url файла изображения
+            var url = $"{host}/Images/{fileName}";
+
+            // Сохранить url файла в объекте
+            doc.Image = url;
+            await _context.SaveChangesAsync(); 
+            
+            return Ok();
+        }
+
+
     }
 }

@@ -49,11 +49,11 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 }
 )
     .AddEntityFrameworkStores<ApplicationDbContext>();
-//builder.Services.AddAuthorization(opt =>
-//{
-//    opt.AddPolicy("admin", p =>
-//    p.RequireClaim(ClaimTypes.Role, "admin"));
-//});
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("admin", p =>
+    p.RequireClaim(ClaimTypes.Role, "admin"));
+});
 builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();//Имитация отправки подтверждающего сообщения
 
 //��������� MVC � Razor Pages ��� ����������� �������.

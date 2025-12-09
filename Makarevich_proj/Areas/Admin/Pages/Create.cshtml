@@ -11,8 +11,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Doctor.Name" class="control-label"></label>
                 <input asp-for="Doctor.Name" class="form-control" />
@@ -29,9 +29,8 @@
                 <span asp-validation-for="Doctor.AmountOfPatients" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Doctor.Image" class="control-label"></label>
-                <input asp-for="Doctor.Image" class="form-control" />
-                <span asp-validation-for="Doctor.Image" class="text-danger"></span>
+                <label asp-for="Image" class="form-label">Изображение</label>
+                <input asp-for="Image" class="form-control" />
             </div>
             <div class="form-group">
                 <label asp-for="Doctor.IdClinic" class="control-label"></label>
@@ -53,4 +52,9 @@
 <div>
     <a asp-page="Index">Back to List</a>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
 

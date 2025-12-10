@@ -33,11 +33,17 @@ namespace Makarevich_proj.Services
             {
                 //получить созданный объект из ответа API-сервиса
                 var doctor = await response.Content.ReadFromJsonAsync<Doctor>();
+
+
+                var baseUri = httpClient.BaseAddress!.ToString().TrimEnd('/');
+                var imageUploadUrl = $"{baseUri}/{doctor.Id}";
+
+
                 //создать объект запроса
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri($"{httpClient.BaseAddress.AbsoluteUri}/{doctor.Id}")
+                    RequestUri = new Uri(imageUploadUrl)
                 };
 
                 // Создать контент типа multipart form-data

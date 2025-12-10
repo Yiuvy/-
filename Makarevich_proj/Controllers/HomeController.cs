@@ -35,7 +35,7 @@ namespace Makarevich_proj.Controllers
            // Обычно это главная страница сайта.
            public IActionResult Index()
            {
-            ViewData["text"] = "Лабораторная работа №5";
+            ViewData["text"] = "Лабораторная работа №7";
             SelectList data = new SelectList(_listElements, "Id", "Name");
                return View(data);
            }

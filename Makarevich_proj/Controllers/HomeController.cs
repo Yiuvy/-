@@ -36,8 +36,11 @@ namespace Makarevich_proj.Controllers
            public IActionResult Index()
            {
             ViewData["text"] = "Лабораторная работа №8";
+
+
             SelectList data = new SelectList(_listElements, "Id", "Name");
                return View(data);
+
            }
 
 

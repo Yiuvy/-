@@ -3,14 +3,24 @@ using System.Security.Claims;
 using Makarevich_proj.Data;
 using Makarevich_proj.Services;
 using Makarevich_proj.Services.contracts_interfaces_;
-
+using Serilog;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Makarevich_proj.Middleware;
+
+
+
+//Настройка Serilog для логирования в консоль и в файл 
+Log.Logger = new LoggerConfiguration()
+.WriteTo.Console()
+.WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+.CreateLogger();
 
 
 var builder = WebApplication.CreateBuilder(args); //�������� ���������� ����������
+builder.Services.AddSerilog();
 
 // Add services to the container.
 //��������� ������ ����������� � ���� ������
@@ -78,7 +88,7 @@ else
 app.UseHttpsRedirection();   // �������������� HTTP �� HTTPS
 app.UseStaticFiles();        // ������������ ����������� ������ (CSS, JS, �����������)
 app.UseRouting();            // �������� �������������
-
+app.UseFileLogger();
 app.UseSession();
 
 app.UseAuthentication();

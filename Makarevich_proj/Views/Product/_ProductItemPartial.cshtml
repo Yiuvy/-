@@ -11,13 +11,14 @@ var returnUrl = request.Path +request.QueryString.ToUriComponent();
 			<h5 class="card-title ">@Model.Surname @Model.Name</h5>
 			<p class="card-text">@Model.Specialization</p>
 			<p class="card-text">
-				@Model.IdClinic
+			Участок №:@Model.IdClinic 
 			</p>
-			<h5><span class="badge bg-secondary">Количество пациентов: @Model.AmountOfPatients</span></h5>
+			<h5><span class="badge bg-secondary">Количество бонусов за посещение: @Model.AmountOfPatients</span></h5>
 		</div><!-- card-body -->
 		<div class="card-footer text-center">
 			<a class="btn btn-outline-primary"
-			   asp-action="add" asp-controller="cart" asp-route-id="@Model.Id"
+			   asp-action="add" asp-controller="cart"
+			   asp-route-id="@Model.Id"
 			   asp-route-returnurl="@returnUrl">
 				Записаться на приём <i class="fa-solid fa-book-open"></i>
 			</a>

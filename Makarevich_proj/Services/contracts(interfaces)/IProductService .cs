@@ -12,11 +12,13 @@ namespace Makarevich_proj.Services.contracts_interfaces_
         /// <param name="pageNo">номер страницы списка</param>
         /// <returns></returns>
         public Task<ResponseData<ListModel<Doctor>>> GetProductListAsync(string? ClinicNormalizedName, int pageNo = 1);
+
         /// <summary>
         /// Поиск объекта по Id
         /// </summary>
         /// <param name="id">Идентификатор объекта</param>
-        /// <returns>Найденный объект или null, если объект не найден</returns> public Task<ResponseData<Dish>> GetProductByIdAsync(int id);
+        /// <returns>Найденный объект или null, если объект не найден</returns> 
+        public Task<ResponseData<Doctor>> GetProductByIdAsync(int id);
         /// <summary>
         /// Обновление объекта
         /// </summary>

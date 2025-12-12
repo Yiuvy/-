@@ -1,4 +1,10 @@
 ﻿
-<a asp-controller="cart" asp-action="index" class="navbar-text ms-auto">
+@* <a asp-controller="cart" asp-action="index" class="navbar-text ms-auto">
 	00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
+</a> *@
+
+
+<a asp-action="Index" asp-controller="Cart" class="navbar-text ms-auto">
+	@Model.TotalCalories бонусов <i class="fa-solid fa-cart-shopping"></i>
+	(@Model.Count)
 </a>

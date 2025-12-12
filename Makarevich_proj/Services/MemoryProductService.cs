@@ -135,6 +135,10 @@ namespace Makarevich_proj.Services
             throw new NotImplementedException();
         }
 
+        public Task<ResponseData<Doctor>> GetProductByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

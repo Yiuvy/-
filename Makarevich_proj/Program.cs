@@ -34,7 +34,8 @@ builder.Services.AddHttpClient<IProductService, ApiProductService>(opt
 builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt
 => opt.BaseAddress = new Uri("https://localhost:7002/api/clinics/"));
 
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 
 //������������� ������� ����� � �������������� ����������� ������������� (IdentityUser).
@@ -77,6 +78,9 @@ else
 app.UseHttpsRedirection();   // �������������� HTTP �� HTTPS
 app.UseStaticFiles();        // ������������ ����������� ������ (CSS, JS, �����������)
 app.UseRouting();            // �������� �������������
+
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();      // �������� �����������
 

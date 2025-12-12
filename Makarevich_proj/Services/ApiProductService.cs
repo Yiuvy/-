@@ -164,6 +164,43 @@ namespace Makarevich_proj.Services
             //return response;
         }
 
+        public async Task<ResponseData<Doctor>> GetProductByIdAsync(int id)
+        {
+            try
+            {
+                var response = await httpClient.GetAsync($"{httpClient.BaseAddress}{id}");
 
+                if (response.IsSuccessStatusCode)
+                {
+                    var product = await response.Content.ReadFromJsonAsync<Doctor>();
+                    return new ResponseData<Doctor> { Data = product, Success = true };
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new ResponseData<Doctor>
+                    {
+                        Success = false,
+                        ErrorMessage = "Продукт не найден"
+                    };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new ResponseData<Doctor>
+                    {
+                        Success = false,
+                        ErrorMessage = $"Ошибка получения продукта: {response.StatusCode} - {errorMessage}"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseData<Doctor>
+                {
+                    Success = false,
+                    ErrorMessage = $"Исключение при получении продукта: {ex.Message}"
+                };
+            }
+        }
     }
 }

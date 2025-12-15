@@ -13,11 +13,20 @@ using Makarevich_proj.Middleware;
 
 
 //Настройка Serilog для логирования в консоль и в файл 
-Log.Logger = new LoggerConfiguration()
-.WriteTo.Console()
-.WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
-.CreateLogger();
 
+
+
+
+
+
+Log.Logger = new LoggerConfiguration()
+ .MinimumLevel.Information() // общий уровень
+ .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // для Microsoft.* логов
+ .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Error)      // для System.* логов
+ .WriteTo.Console()
+.WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+
+.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args); //�������� ���������� ����������
 builder.Services.AddSerilog();

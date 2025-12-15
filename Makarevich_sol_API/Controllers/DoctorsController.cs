@@ -28,58 +28,105 @@ namespace Makarevich_sol_API.Controllers
             _config = config;
         }
 
-        // GET: api/Doctors
+        //// GET: api/Doctors
+        //[HttpGet]
+        //public async Task<ActionResult<ResponseData<ListModel<Doctor>>> GetDoctors(string? ClinicNormalizedName,
+        //    int pageNo = 1,
+        //    int pageSize = 3)
+        //{
+
+        //    // Создать объект результата
+        //    var result = new ResponseData<ListModel<Doctor>>();
+
+        //    int? clinicId = null;
+
+        //    // если требуется фильтрация, то найти Id категории
+        //    // с заданным categoryNormalizedName
+
+        //    if (ClinicNormalizedName != null)
+        //        clinicId = _context.Clinics
+        //        .FirstOrDefault(c => c.IdNormalizedName.Equals(ClinicNormalizedName))
+        //        ?.Id;
+
+        //    // Выбрать объекты, отфильтрованные по Id категории,
+        //    // если этот Id имеется
+        //    var data = _context.Doctors
+        //    .Where(d => clinicId == null || d.IdClinic.Equals(clinicId))?
+        //    .ToList();
+
+
+        //    // получить размер страницы из конфигурации
+        //    int pgSize = _config.GetSection("ItemsPerPage").Get<int>();
+        //    // получить общее количество страниц
+        //    int totalPages = (int)Math.Ceiling(data.Count / (double)pageSize);
+
+        //    // получить данные страницы
+        //    var listData = new ListModel<Doctor>()
+        //    {
+        //        Items = data.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList(),
+        //        CurrentPage = pageNo,
+        //        TotalPages = totalPages
+        //    };
+
+        //    // поместить данные в объект результата
+        //    result.Data = listData;
+
+        //    // Если список пустой
+        //    if (data.Count == 0)
+        //    {
+        //        result.Success = false;
+        //        result.ErrorMessage = "Нет объектов в выбраннной категории";
+        //    }
+
+        //    return result;
+        //}
+
+
+        // GET: api/Dishes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors(string? ClinicNormalizedName,
-            int pageNo = 1,
-            int pageSize = 3)
+        public async Task<ActionResult<ResponseData<ListModel<Doctor>>>> GetDoctors(
+                        string? ClinicNormalizedName,
+                        int pageNo = 1,
+                        int pageSize = 3)
         {
 
             // Создать объект результата
             var result = new ResponseData<ListModel<Doctor>>();
-
-            int? clinicId = null;
-
-            // если требуется фильтрация, то найти Id категории
-            // с заданным categoryNormalizedName
-
-            if (ClinicNormalizedName != null)
-                clinicId = _context.Clinics
-                .FirstOrDefault(c => c.IdNormalizedName.Equals(ClinicNormalizedName))
-                ?.Id;
-
-            // Выбрать объекты, отфильтрованные по Id категории,
-            // если этот Id имеется
+            // Фильтрация по категории загрузка данных категории
+            var clinic = _context.Clinics.FirstOrDefault(c => c.IdNormalizedName == ClinicNormalizedName);
             var data = _context.Doctors
-            .Where(d => clinicId == null || d.IdClinic.Equals(clinicId))?
-            .ToList();
+                .Where(d => String.IsNullOrEmpty(ClinicNormalizedName)
+                        || d.IdClinic == clinic.Id);
+                      
+            // Подсчет общего количества страниц
+            int totalPages = (int)Math.Ceiling(data.Count() / (double)pageSize);
+            if (pageNo > totalPages)
+                pageNo = totalPages;
 
-
-            // получить размер страницы из конфигурации
-            int pgSize = _config.GetSection("ItemsPerPage").Get<int>();
-            // получить общее количество страниц
-            int totalPages = (int)Math.Ceiling(data.Count / (double)pageSize);
-
-            // получить данные страницы
+            // Создание объекта ProductListModel с нужной страницей данных
             var listData = new ListModel<Doctor>()
             {
-                Items = data.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList(),
+                Items = await data
+                                .Skip((pageNo - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync(),
                 CurrentPage = pageNo,
                 TotalPages = totalPages
             };
-
             // поместить данные в объект результата
             result.Data = listData;
 
             // Если список пустой
-            if (data.Count == 0)
+            if (data.Count() == 0)
             {
+                // ResponseData<ProductListModel<Dish>>.Error("Нет объектов в выбраннной категории", listData);
                 result.Success = false;
                 result.ErrorMessage = "Нет объектов в выбраннной категории";
             }
 
-            return Ok(result);
+            return result;
         }
+
 
 
         // GET: api/Doctors/5
@@ -88,8 +135,8 @@ namespace Makarevich_sol_API.Controllers
         {
             var doctor = _context.Doctors.Find(id);
             if (doctor == null) { return NotFound(); }
-
-            return Ok(doctor);
+            return doctor;
+           // return Ok(doctor);
 
         }
 

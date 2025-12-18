@@ -6,10 +6,13 @@
 
 <CascadingValue Value="ProductService">
 	<DoctorsList DishSelected="ShowDetails" />
+	
 </CascadingValue>
 
+<h3>Подробнее</h3>
+<DocDetails Doctor="SelectedDish" />
 
-<h3>Products</h3>
+
 
 @code {
 	[Inject] IProdService<Doctor> ProductService { get; set; }

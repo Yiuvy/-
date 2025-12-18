@@ -1,0 +1,20 @@
+﻿@using Makarevich_sol_Domain.Entities
+
+@if (Doctor!= null)
+{
+	<div class="card mt-5" style="width: 18rem;">
+		<img src="@Doctor.Image" class="card-img-top" alt="...">
+		<div class="card-body">
+			<h5 class="card-title">@Doctor.Name</h5>
+			<p class="card-text">@Doctor.Surname</p>
+			<h4 class="badge bg-info">@Doctor.AmountOfPatients бонусных баллов</h4>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Doctor Doctor { get; set; }
+	[Parameter]
+	public EventCallback<Doctor> DishChanged { get; set; }
+}

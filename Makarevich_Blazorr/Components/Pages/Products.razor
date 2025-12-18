@@ -1,8 +1,30 @@
 ﻿@page "/doctors"
+@using Makarevich_Blazorr.Services
+@using Makarevich_sol_Domain.Entities
 @rendermode InteractiveServer
+
+
+<CascadingValue Value="ProductService">
+	<DoctorsList DishSelected="ShowDetails" />
+</CascadingValue>
+
 
 <h3>Products</h3>
 
 @code {
+	[Inject] IProdService<Doctor> ProductService { get; set; }
+
+	[Parameter]
+	public Doctor SelectedDish { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await ProductService.GetProducts();
+	}
+	void ShowDetails(int id)
+	{
+		SelectedDish = ProductService.Products.First(d => d.Id == id);
+	}
 
 }

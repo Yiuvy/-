@@ -1,8 +1,8 @@
 ﻿@page "/doctors"
+@rendermode InteractiveServer
+@using Makarevich_Blazorr.Components.ProductComponents
 @using Makarevich_Blazorr.Services
 @using Makarevich_sol_Domain.Entities
-@rendermode InteractiveServer
-
 
 <CascadingValue Value="ProductService">
 	<DoctorsList DishSelected="ShowDetails" />
